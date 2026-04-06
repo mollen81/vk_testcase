@@ -15,7 +15,7 @@ repositories {
 // Tarantool
 dependencies {
     implementation("io.tarantool:tarantool-client:1.5.0")
-    implementation("io.tarantool:cartridge-driver:0.14.0")
+    implementation("io.tarantool:spring-data-tarantool:0.5.2")
 }
 
 // gRPC
@@ -32,6 +32,7 @@ dependencies {
 dependencies {
     // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation("org.springframework.boot:spring-boot-starter-web:3.5.13")
+    implementation("org.springframework.boot:spring-boot-data-jpa:3.5.13")
 }
 
 // JUnit
