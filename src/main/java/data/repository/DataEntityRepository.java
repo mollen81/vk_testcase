@@ -15,7 +15,7 @@ public interface DataEntityRepository extends TarantoolRepository<DataEntity, St
     Optional<DataEntity> findById(String key);
 
     @Override
-    Optional<DataEntity> save(DataEntity entity);
+    DataEntity save(DataEntity entity);
 
     @Override
     void deleteById(String key);

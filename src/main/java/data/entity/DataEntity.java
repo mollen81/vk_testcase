@@ -9,8 +9,8 @@ import org.springframework.data.tarantool.core.mapping.Field;
 import org.springframework.data.tarantool.core.mapping.Tuple;
 
 @Tuple(spaceName = "KV")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class DataEntity {
     @Id
@@ -19,5 +19,5 @@ public class DataEntity {
     private String key;
 
     @Field(name = "value")
-    private byte value;
+    private byte[] value;
 }
