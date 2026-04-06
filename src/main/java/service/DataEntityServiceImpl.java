@@ -13,7 +13,7 @@ import java.util.Optional;
 @GrpcService
 @RequiredArgsConstructor
 @Slf4j
-public class DataEntityServiceImpl {
+public class DataEntityServiceImpl implements DataEntityService{
 
     private DataEntityRepository repository;
 
@@ -22,13 +22,14 @@ public class DataEntityServiceImpl {
         this.repository = repository;
     }
 
-
+    @Override
     public DataEntity put(@NonNull String key, byte[] value) {
         DataEntity data = new DataEntity(key, value);
         repository.save(data);
         return data;
     }
 
+    @Override
     public Optional<DataEntity> get(String key) {
         if(repository.existsById(key)) {
             return repository.findById(key);
@@ -36,6 +37,7 @@ public class DataEntityServiceImpl {
         return Optional.empty();
     }
 
+    @Override
     public boolean delete(String key) {
         if(repository.existsById(key)) {
             repository.deleteById(key);
@@ -46,6 +48,7 @@ public class DataEntityServiceImpl {
         }
     }
 
+    @Override
     public long count() {
         return repository.count();
     }
