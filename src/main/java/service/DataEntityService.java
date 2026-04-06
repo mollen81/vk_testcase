@@ -45,4 +45,8 @@ public class DataEntityService {
                 .value(value).build();
         repository.save(data);
     }
+
+    public long count() {
+        return repository.count();
+    }
 }
