@@ -18,6 +18,6 @@ public class DataEntity {
     @Field(name = "key")
     private String key;
 
-    @Field(name = "name")
-    private byte name;
+    @Field(name = "value")
+    private byte value;
 }
