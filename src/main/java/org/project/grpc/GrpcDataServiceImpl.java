@@ -1,14 +1,13 @@
-package grpc;
+package org.project.grpc;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
-import data.entity.DataEntity;
+import org.project.data.entity.DataEntity;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.project.grpc.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import service.DataService;
+import org.project.service.DataService;
 
 import java.util.List;
 

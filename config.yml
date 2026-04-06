@@ -1,0 +1,11 @@
+iproto:
+  listen:
+    - uri: '0.0.0.0:3301'
+
+credentials:
+  users:
+    guest:
+      roles: [super]
+
+app:
+  file: '/dev/null'

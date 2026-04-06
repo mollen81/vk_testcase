@@ -1,13 +1,16 @@
-package service;
+package org.project.service;
 
-import data.entity.DataEntity;
-import data.repository.DataEntityRepository;
+import org.project.data.entity.DataEntity;
+import org.project.data.repository.DataEntityRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
+@Service
 public class DataServiceImpl implements DataService {
     private final DataEntityRepository repository;
 
