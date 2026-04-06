@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.google.protobuf") version "0.9.6"
 }
 
 group = "org.project"
@@ -20,19 +21,13 @@ dependencies {
 
 // gRPC
 dependencies {
-    // Source: https://mvnrepository.com/artifact/io.grpc/grpc-netty-shaded
-    implementation("io.grpc:grpc-netty-shaded:1.80.0")
-    // Source: https://mvnrepository.com/artifact/io.grpc/grpc-protobuf
-    implementation("io.grpc:grpc-protobuf:1.80.0")
-    // Source: https://mvnrepository.com/artifact/io.grpc/grpc-stub
-    implementation("io.grpc:grpc-stub:1.80.0")
+    // Source: https://mvnrepository.com/artifact/net.devh/grpc-server-spring-boot-starter
+    implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
 }
 
 //Spring
 dependencies {
-    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-    implementation("org.springframework.boot:spring-boot-starter-web:3.5.13")
-    implementation("org.springframework.boot:spring-boot-data-jpa:3.5.13")
+
 }
 
 // JUnit
@@ -44,12 +39,23 @@ dependencies {
 
 // Lombok
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.44")
-    testImplementation("org.projectlombok:lombok:1.18.44")
     compileOnly("org.projectlombok:lombok:1.18.44")
-    runtimeOnly("org.projectlombok:lombok:1.18.44")
+    annotationProcessor("org.projectlombok:lombok:1.18.44")
+    testCompileOnly("org.projectlombok:lombok:1.18.44")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.44")
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.0"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+
+        }
+    }
 }
