@@ -3,24 +3,20 @@ package service;
 import data.entity.DataEntity;
 import data.repository.DataEntityRepository;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-@GrpcService
-@RequiredArgsConstructor
-@Slf4j
-public class DataEntityServiceImpl implements DataEntityService{
-
-    private DataEntityRepository repository;
+public class DataServiceImpl implements DataService {
+    private final DataEntityRepository repository;
 
     @Autowired
-    public DataEntityServiceImpl(DataEntityRepository repository) {
+    public DataServiceImpl(DataEntityRepository repository) {
         this.repository = repository;
     }
+
 
     @Override
     public DataEntity put(@NonNull String key, byte[] value) {
@@ -47,6 +43,12 @@ public class DataEntityServiceImpl implements DataEntityService{
             return false;
         }
     }
+
+    @Override
+    public List<DataEntity> range(String key_since, String key_to) {
+        return repository.findAllByKeyBetween(key_since, key_to);
+    }
+
 
     @Override
     public long count() {

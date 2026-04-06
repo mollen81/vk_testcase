@@ -21,13 +21,16 @@ dependencies {
 
 // gRPC
 dependencies {
-    // Source: https://mvnrepository.com/artifact/net.devh/grpc-server-spring-boot-starter
     implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
+    implementation("io.grpc:grpc-stub:1.62.2")
+    implementation("io.grpc:grpc-protobuf:1.62.2")
+    implementation("com.google.protobuf:protobuf-java:3.24.0")
+    implementation("com.google.protobuf:protobuf-java-util:3.24.0")
 }
 
-//Spring
+//Other
 dependencies {
-
+    compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 }
 
 // JUnit
@@ -53,9 +56,16 @@ protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:3.24.0"
     }
+    plugins {
+        create("grpc") {  // ← этого не хватало
+            artifact = "io.grpc:protoc-gen-grpc-java:1.62.2"
+        }
+    }
     generateProtoTasks {
         all().forEach { task ->
-
+            task.plugins {
+                create("grpc")  // ← и этого
+            }
         }
     }
 }
