@@ -3,6 +3,7 @@ package grpc;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
 import data.entity.DataEntity;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.project.grpc.*;
@@ -10,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import service.DataService;
 
 import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.StreamSupport.stream;
 
 
 @GrpcService
@@ -27,54 +25,104 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
 
     @Override
     public void putData(PutDataRequest request, StreamObserver<PutDataResponse> responseObserver) {
-        DataEntity entity = dataService.put(request.getKey(), request.getValue().toByteArray());
+        try {
+            DataEntity entity = dataService.put(request.getKey(), request.getValue().toByteArray());
 
-        responseObserver.onNext(PutDataResponse.newBuilder()
-                .setEntity(org.project.grpc.DataEntity.newBuilder()
-                        .setKey(entity.getKey())
-                        .setValue(ByteString.copyFrom(entity.getValue()))
-                        .buildPartial())
-                .build());
-        responseObserver.onCompleted();
+            responseObserver.onNext(PutDataResponse.newBuilder()
+                    .setEntity(mapToProto(entity))
+                    .build());
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Put failed: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
 
     @Override
     public void getData(GetDataRequest request, StreamObserver<GetDataResponse> responseObserver) {
-        DataEntity entity = dataService.get(request.getKey()).get();
+        try {
+            DataEntity entity = dataService.get(request.getKey()).get();
 
-        responseObserver.onNext(GetDataResponse.newBuilder()
-                        .setValue(ByteString.copyFrom(entity.getValue()))
-                        .build());
-        responseObserver.onCompleted();
+            responseObserver.onNext(GetDataResponse.newBuilder()
+                    .setValue(ByteString.copyFrom(entity.getValue()))
+                    .build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Get failed: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void deleteData(DeleteDataRequest request, StreamObserver<DeleteDataResponse> responseObserver) {
-        boolean success = dataService.delete(request.getKey());
+        try {
+            boolean success = dataService.delete(request.getKey());
 
-        responseObserver.onNext(DeleteDataResponse.newBuilder()
-                        .setSuccess(success)
-                        .build());
-        responseObserver.onCompleted();
+            responseObserver.onNext(DeleteDataResponse.newBuilder()
+                    .setSuccess(success)
+                    .build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Delete failed: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void range(RangeRequest request, StreamObserver<org.project.grpc.DataEntity> responseObserver) {
-        List<DataEntity> entityList = dataService.range(request.getKeySince(), request.getKeyTo());
+        try {
+            List<DataEntity> entities = dataService.range(
+                    request.getKeySince(),
+                    request.getKeyTo()
+            );
 
+            // каждый объект отправляется отдельным onNext — это и есть server-side streaming
+            entities.stream()
+                    .map(this::mapToProto)
+                    .forEach(responseObserver::onNext);
 
+            responseObserver.onCompleted();
 
-
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Range failed: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void count(Empty request, StreamObserver<CountResponse> responseObserver) {
-        long count = dataService.count();
+        try {
+            long count = dataService.count();
 
-        responseObserver.onNext(CountResponse.newBuilder()
-                        .setCount(count)
-                        .build());
-        responseObserver.onCompleted();
+            responseObserver.onNext(CountResponse.newBuilder()
+                    .setCount(count)
+                    .build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Count failed: " + e.getMessage())
+                    .withCause(e)
+                    .asRuntimeException());
+        }
+    }
+
+
+    private org.project.grpc.DataEntity mapToProto(DataEntity entity) {
+        return org.project.grpc.DataEntity.newBuilder()
+                .setKey(entity.getKey())
+                .setValue(ByteString.copyFrom(entity.getValue()))
+                .build();
     }
 }
