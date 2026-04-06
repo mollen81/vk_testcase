@@ -7,17 +7,46 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    google()
+    gradlePluginPortal()
 }
 
+
+// Tarantool
+dependencies {
+    implementation("io.tarantool:tarantool-client:1.5.0")
+    implementation("io.tarantool:cartridge-driver:0.14.0")
+}
+
+// gRPC
+dependencies {
+    // Source: https://mvnrepository.com/artifact/io.grpc/grpc-netty-shaded
+    implementation("io.grpc:grpc-netty-shaded:1.80.0")
+    // Source: https://mvnrepository.com/artifact/io.grpc/grpc-protobuf
+    implementation("io.grpc:grpc-protobuf:1.80.0")
+    // Source: https://mvnrepository.com/artifact/io.grpc/grpc-stub
+    implementation("io.grpc:grpc-stub:1.80.0")
+}
+
+//Spring
+dependencies {
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+    implementation("org.springframework.boot:spring-boot-starter-web:3.5.13")
+}
+
+// JUnit
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-// Tarantool
+// Lombok
 dependencies {
-    implementation("io.tarantool:tarantool-client:1.5.0")
+    implementation("org.projectlombok:lombok:1.18.44")
+    testImplementation("org.projectlombok:lombok:1.18.44")
+    compileOnly("org.projectlombok:lombok:1.18.44")
+    runtimeOnly("org.projectlombok:lombok:1.18.44")
 }
 
 tasks.test {
