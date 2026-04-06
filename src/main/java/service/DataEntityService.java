@@ -19,7 +19,9 @@ public class DataEntityService {
 
 
     public @NonNull DataEntity put(String key, byte value) {
-        DataEntity data = new DataEntity(key, value);
+        DataEntity data = DataEntity.builder()
+                    .key(key)
+                    .value(value).build();
         repository.save(data);
         return data;
     }
@@ -38,7 +40,9 @@ public class DataEntityService {
     }
 
     public void update(String key, byte value) {
-        DataEntity entity = new DataEntity(key, value);
-        repository.save(entity);
+        DataEntity data = DataEntity.builder()
+                .key(key)
+                .value(value).build();
+        repository.save(data);
     }
 }
