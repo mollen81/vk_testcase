@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+
+  java-api:
+    build: .
+    ports:
+      - "9090:9090"
+    depends_on:
+      - tarantool
+    environment:
+      - TARANTOOL_HOST=localhost
+      - TARANTOOL_PORT=3301
+
+  tarantool:
+    image: tarantool/tarantool:latest
+    ports:
+      - "3301:3301"
+    volumes:
+      - ./tarantool_init.lua:/opt/tarantool/init.lua
+    command: tarantool /opt/tarantool/init.lua

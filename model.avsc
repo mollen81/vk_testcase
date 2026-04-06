@@ -1,0 +1,18 @@
+[
+  {
+	"name": "KV",
+	"type": "record",
+	"fields": [
+  	{
+    	"name": "key",
+    	"type": "string"
+  	},
+  	{
+    	"name": "value",
+    	"type": "varbinary"
+  	}
+  }
+  "indexes": [
+    	"KV_guid"
+  	]
+]
