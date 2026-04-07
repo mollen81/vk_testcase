@@ -6,9 +6,9 @@ import io.tarantool.driver.api.TarantoolResult;
 import io.tarantool.driver.api.tuple.TarantoolTuple;
 import io.tarantool.driver.auth.SimpleTarantoolCredentials;
 import io.tarantool.driver.core.ClusterTarantoolTupleClient;
-import io.tarantool.driver.core.ProxyTarantoolTupleClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.tarantool.core.TarantoolTemplate;
 import org.springframework.data.tarantool.core.convert.MappingTarantoolConverter;
 import org.springframework.data.tarantool.core.convert.TarantoolConverter;
@@ -43,7 +43,10 @@ public class TarantoolConfig {  // ← больше не наследуем
 
     @Bean
     public TarantoolMappingContext tarantoolMappingContext() {
-        return new TarantoolMappingContext();
+        TarantoolMappingContext context = new TarantoolMappingContext();
+        // Отключаем авто-конвертацию имён — берём spaceName как есть из @Tuple
+        context.setFieldNamingStrategy(PropertyNameFieldNamingStrategy.INSTANCE);
+        return context;
     }
 
     @Bean

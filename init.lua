@@ -1,4 +1,16 @@
-box.cfg{
-    listen = '0.0.0.0:3301'
-}
+box.cfg{}
+
+if box.space.data_entity == nil then
+    local s = box.schema.space.create('data_entity')
+    s:format({
+        { name = 'key',   type = 'string' },
+        { name = 'value', type = 'varbinary' },
+    })
+    s:create_index('primary', {
+        type  = 'hash',
+        parts = { 'key' }
+    })
+    print('Space data_entity created')
+end
+
 box.schema.user.grant('guest', 'read,write,execute', 'universe', nil, { if_not_exists = true })

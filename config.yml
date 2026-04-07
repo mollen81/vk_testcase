@@ -1,11 +1,22 @@
+credentials:
+  users:
+    guest:
+      password: ''
+      roles: [super]
+
 iproto:
   listen:
     - uri: '0.0.0.0:3301'
 
-credentials:
-  users:
-    guest:
-      roles: [super]
+groups:
+  group-001:
+    replicasets:
+      replicaset-001:
+        instances:
+          instance-001:
+            iproto:
+              listen:
+                - uri: '0.0.0.0:3301'
 
 app:
-  file: 'init.lua'
+  file: '/opt/tarantool/init.lua'
