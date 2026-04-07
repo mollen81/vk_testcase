@@ -8,4 +8,4 @@ credentials:
       roles: [super]
 
 app:
-  file: '/dev/null'
+  file: 'init.lua'
