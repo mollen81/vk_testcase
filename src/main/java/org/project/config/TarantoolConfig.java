@@ -19,6 +19,7 @@ import org.springframework.data.tarantool.repository.config.EnableTarantoolRepos
 import org.springframework.data.tarantool.repository.config.TarantoolRepositoryOperationsMapping;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 @Configuration
@@ -50,15 +51,6 @@ public class TarantoolConfig {  // ← больше не наследуем
     }
 
     @Bean
-    public TarantoolConverter tarantoolConverter(TarantoolMappingContext mappingContext) {
-        return new MappingTarantoolConverter(
-                mappingContext,
-                new TarantoolMapTypeAliasAccessor("_type"),
-                new TarantoolCustomConversions(Collections.emptyList())
-        );
-    }
-
-    @Bean
     public TarantoolTemplate tarantoolTemplate(
             TarantoolClient<TarantoolTuple, TarantoolResult<TarantoolTuple>> tarantoolClient,
             TarantoolMappingContext mappingContext,
@@ -75,5 +67,18 @@ public class TarantoolConfig {  // ← больше не наследуем
     public TarantoolRepositoryOperationsMapping tarantoolRepositoryOperationsMapping(
             TarantoolTemplate tarantoolTemplate) {
         return new TarantoolRepositoryOperationsMapping(tarantoolTemplate);
+    }
+
+    @Bean
+    public TarantoolConverter tarantoolConverter(TarantoolMappingContext mappingContext) {
+        var conversions = new TarantoolCustomConversions(List.of(
+                new BinaryValueToByteArrayConverter(),
+                new ByteArrayToBinaryValueConverter()
+        ));
+        return new MappingTarantoolConverter(
+                mappingContext,
+                new TarantoolMapTypeAliasAccessor("_type"),
+                conversions
+        );
     }
 }
