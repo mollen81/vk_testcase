@@ -85,7 +85,6 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
                     request.getKeyTo()
             );
 
-            // каждый объект отправляется отдельным onNext — это и есть server-side streaming
             entities.stream()
                     .map(this::mapToProto)
                     .forEach(responseObserver::onNext);

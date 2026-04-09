@@ -18,13 +18,12 @@ import org.springframework.data.tarantool.core.mapping.TarantoolMappingContext;
 import org.springframework.data.tarantool.repository.config.EnableTarantoolRepositories;
 import org.springframework.data.tarantool.repository.config.TarantoolRepositoryOperationsMapping;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 @Configuration
 @EnableTarantoolRepositories(basePackages = "org.project.data.repository")
-public class TarantoolConfig {  // ← больше не наследуем
+public class TarantoolConfig {
 
     @Bean
     public TarantoolClientConfig tarantoolClientConfig() {
@@ -36,7 +35,7 @@ public class TarantoolConfig {  // ← больше не наследуем
     @Bean
     public TarantoolClient<TarantoolTuple, TarantoolResult<TarantoolTuple>> tarantoolClient(
             TarantoolClientConfig tarantoolClientConfig) {
-        return new ClusterTarantoolTupleClient(  // ← убрали ProxyTarantoolTupleClient
+        return new ClusterTarantoolTupleClient(
                 tarantoolClientConfig,
                 "localhost", 3301
         );
@@ -45,7 +44,6 @@ public class TarantoolConfig {  // ← больше не наследуем
     @Bean
     public TarantoolMappingContext tarantoolMappingContext() {
         TarantoolMappingContext context = new TarantoolMappingContext();
-        // Отключаем авто-конвертацию имён — берём spaceName как есть из @Tuple
         context.setFieldNamingStrategy(PropertyNameFieldNamingStrategy.INSTANCE);
         return context;
     }

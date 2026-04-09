@@ -1,7 +1,7 @@
 box.cfg{}
 
 if box.space.data_entity == nil then
-    local s = box.schema.space.create('data_entity')
+    local s = box.schema.space.create('KV')
     s:format({
         { name = 'key',   type = 'string' },
         { name = 'value', type = 'varbinary' },
