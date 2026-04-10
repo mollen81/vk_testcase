@@ -10,7 +10,7 @@ if box.space.data_entity == nil then
         type  = 'hash',
         parts = { 'key' }
     })
-    print('Space data_entity created')
+    print('Space KV created')
 end
 
 box.schema.user.grant('guest', 'read,write,execute', 'universe', nil, { if_not_exists = true })

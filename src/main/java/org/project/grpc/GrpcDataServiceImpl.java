@@ -9,6 +9,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.project.service.DataService;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -34,7 +35,7 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
 
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Put failed: " + e.getMessage())
+                    .withDescription("Put failed: " + Arrays.toString(e.getStackTrace()))
                     .withCause(e)
                     .asRuntimeException());
         }
