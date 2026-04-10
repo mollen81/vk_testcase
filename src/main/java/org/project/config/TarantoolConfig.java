@@ -7,10 +7,12 @@ import io.tarantool.driver.api.tuple.TarantoolTuple;
 import io.tarantool.driver.auth.SimpleTarantoolCredentials;
 import io.tarantool.driver.core.ClusterTarantoolTupleClient;
 import io.tarantool.driver.mappers.DefaultMessagePackMapper;
+import io.tarantool.driver.mappers.converters.ObjectConverter;
+import io.tarantool.driver.mappers.converters.ValueConverter;
 import org.msgpack.value.BinaryValue;
 import org.msgpack.value.ValueFactory;
 import org.msgpack.value.ValueType;
-import org.msgpack.value.impl.ImmutableBinaryValueImpl;
+import org.msgpack.value.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
@@ -38,27 +40,41 @@ public class TarantoolConfig {
     }
 
     @Bean
-    public TarantoolClient<TarantoolTuple, TarantoolResult<TarantoolTuple>> tarantoolClient(
-            TarantoolClientConfig tarantoolClientConfig) {
-        ClusterTarantoolTupleClient client = new ClusterTarantoolTupleClient(
-                tarantoolClientConfig,
-                "localhost", 3301
-        );
+    public TarantoolClient<TarantoolTuple, TarantoolResult<TarantoolTuple>> tarantoolClient() {
 
-        DefaultMessagePackMapper mapper = (DefaultMessagePackMapper) client.getConfig().getMessagePackMapper();
-        mapper.registerValueConverter(
-                ValueType.BINARY,
-                byte[].class,
-                (ImmutableBinaryValueImpl source) -> source.asByteArray()
-        );
+        DefaultMessagePackMapper mapper = new DefaultMessagePackMapper.Builder()
+                .withDefaultMapValueConverter()
+                .withDefaultArrayValueConverter()
+                .build();
 
         mapper.registerObjectConverter(
                 byte[].class,
                 BinaryValue.class,
-                ValueFactory::newBinary
+                new ObjectConverter<byte[], BinaryValue>() {
+                    @Override
+                    public BinaryValue toValue(byte[] object) {
+                        return ValueFactory.newBinary(object);
+                    }
+                }
         );
 
-        return client;
+        mapper.registerValueConverter(
+                ValueType.BINARY,
+                byte[].class,
+                new ValueConverter<Value, byte[]>() {
+                    @Override
+                    public byte[] fromValue(Value value) {
+                        return value.asBinaryValue().asByteArray();
+                    }
+                }
+        );
+
+        TarantoolClientConfig config = TarantoolClientConfig.builder()
+                .withCredentials(new SimpleTarantoolCredentials("guest", ""))
+                .withMessagePackMapper(mapper)
+                .build();
+
+        return new ClusterTarantoolTupleClient(config, "localhost", 3301);
     }
 
     @Bean
@@ -89,14 +105,13 @@ public class TarantoolConfig {
 
     @Bean
     public TarantoolConverter tarantoolConverter(TarantoolMappingContext mappingContext) {
-        var conversions = new TarantoolCustomConversions(List.of(
-                new BinaryValueToByteArrayConverter(),
-                new ByteArrayToBinaryValueConverter()
-        ));
         return new MappingTarantoolConverter(
                 mappingContext,
                 new TarantoolMapTypeAliasAccessor("_type"),
-                conversions
+                new TarantoolCustomConversions(List.of(
+                        new BinaryValueToByteArrayConverter(),
+                        new ByteArrayToBinaryValueConverter()
+                ))
         );
     }
 }
