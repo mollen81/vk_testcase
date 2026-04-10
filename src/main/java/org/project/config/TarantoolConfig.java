@@ -6,6 +6,11 @@ import io.tarantool.driver.api.TarantoolResult;
 import io.tarantool.driver.api.tuple.TarantoolTuple;
 import io.tarantool.driver.auth.SimpleTarantoolCredentials;
 import io.tarantool.driver.core.ClusterTarantoolTupleClient;
+import io.tarantool.driver.mappers.DefaultMessagePackMapper;
+import org.msgpack.value.BinaryValue;
+import org.msgpack.value.ValueFactory;
+import org.msgpack.value.ValueType;
+import org.msgpack.value.impl.ImmutableBinaryValueImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
@@ -35,10 +40,25 @@ public class TarantoolConfig {
     @Bean
     public TarantoolClient<TarantoolTuple, TarantoolResult<TarantoolTuple>> tarantoolClient(
             TarantoolClientConfig tarantoolClientConfig) {
-        return new ClusterTarantoolTupleClient(
+        ClusterTarantoolTupleClient client = new ClusterTarantoolTupleClient(
                 tarantoolClientConfig,
                 "localhost", 3301
         );
+
+        DefaultMessagePackMapper mapper = (DefaultMessagePackMapper) client.getConfig().getMessagePackMapper();
+        mapper.registerValueConverter(
+                ValueType.BINARY,
+                byte[].class,
+                (ImmutableBinaryValueImpl source) -> source.asByteArray()
+        );
+
+        mapper.registerObjectConverter(
+                byte[].class,
+                BinaryValue.class,
+                ValueFactory::newBinary
+        );
+
+        return client;
     }
 
     @Bean

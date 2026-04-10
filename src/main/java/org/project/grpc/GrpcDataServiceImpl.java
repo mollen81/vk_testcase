@@ -35,7 +35,7 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
 
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Put failed: " + Arrays.toString(e.getStackTrace()))
+                    .withDescription("Put failed: " + (Arrays.toString(e.getStackTrace())))
                     .withCause(e)
                     .asRuntimeException());
         }
