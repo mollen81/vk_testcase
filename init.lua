@@ -1,6 +1,6 @@
 box.cfg{}
 
-if box.space.data_entity == nil then
+if box.space.KV == nil then
     local s = box.schema.space.create('KV')
     s:format({
         { name = 'key',   type = 'string' },
@@ -13,4 +13,4 @@ if box.space.data_entity == nil then
     print('Space KV created')
 end
 
-box.schema.user.grant('guest', 'read,write,execute', 'universe', nil, { if_not_exists = true })
+box.schema.user.grant('api_user', 'read,write,execute', 'universe', nil, { if_not_exists = true })

@@ -35,7 +35,7 @@ public class TarantoolConfig {
     @Bean
     public TarantoolClientConfig tarantoolClientConfig() {
         return TarantoolClientConfig.builder()
-                .withCredentials(new SimpleTarantoolCredentials("guest", ""))
+                .withCredentials(new SimpleTarantoolCredentials("api_user", "123"))
                 .build();
     }
 
@@ -70,7 +70,7 @@ public class TarantoolConfig {
         );
 
         TarantoolClientConfig config = TarantoolClientConfig.builder()
-                .withCredentials(new SimpleTarantoolCredentials("guest", ""))
+                .withCredentials(new SimpleTarantoolCredentials("api_user", "123"))
                 .withMessagePackMapper(mapper)
                 .build();
 

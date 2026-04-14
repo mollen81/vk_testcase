@@ -8,7 +8,7 @@ services:
       - ./init.lua:/opt/tarantool/init.lua
       - tarantool_data:/var/lib/tarantool
     environment:
-      TARANTOOL_USER_NAME: guest
+      TARANTOOL_USER_NAME: api_user
       TT_CONFIG: /etc/tarantool/config.yml
 volumes:
   tarantool_data:

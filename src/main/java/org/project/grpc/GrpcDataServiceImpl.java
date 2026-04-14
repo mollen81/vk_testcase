@@ -6,8 +6,8 @@ import org.project.data.entity.DataEntity;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.project.data.repository.DataEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.project.service.DataService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,18 +15,21 @@ import java.util.List;
 
 @GrpcService
 public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
-    private final DataService dataService;
+    private final DataEntityRepository repo;
 
     @Autowired
-    public GrpcDataServiceImpl(DataService dataService) {
-        this.dataService = dataService;
+    public GrpcDataServiceImpl(DataEntityRepository repo) {
+        this.repo = repo;
     }
 
 
     @Override
     public void putData(PutDataRequest request, StreamObserver<PutDataResponse> responseObserver) {
         try {
-            DataEntity entity = dataService.put(request.getKey(), request.getValue().toByteArray());
+            DataEntity entity = repo.save(DataEntity.builder()
+                    .key(request.getKey())
+                    .value(request.getValue().toByteArray())
+                    .build());
 
             responseObserver.onNext(PutDataResponse.newBuilder()
                     .setEntity(mapToProto(entity))
@@ -35,14 +38,14 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
 
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Put failed: " + (Arrays.toString(e.getStackTrace())))
+                    .withDescription("Put failed: " + Arrays.toString(e.getStackTrace()))
                     .withCause(e)
                     .asRuntimeException());
         }
     }
 
 
-    @Override
+    /*@Override
     public void getData(GetDataRequest request, StreamObserver<GetDataResponse> responseObserver) {
         try {
             DataEntity entity = dataService.get(request.getKey()).get();
@@ -115,7 +118,7 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
                     .withCause(e)
                     .asRuntimeException());
         }
-    }
+    }*/
 
 
     private org.project.grpc.DataEntity mapToProto(DataEntity entity) {
