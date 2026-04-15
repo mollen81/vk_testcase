@@ -1,3 +1,5 @@
+box.cfg{}
+
 if box.space.KV == nil then
     local s = box.schema.space.create('KV')
     s:format({
@@ -10,3 +12,5 @@ if box.space.KV == nil then
     })
     print('Space KV created')
 end
+
+box.schema.user.grant('api_user', 'read,write,execute', 'universe', nil, { if_not_exists = true })

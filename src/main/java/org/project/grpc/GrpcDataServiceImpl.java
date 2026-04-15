@@ -8,7 +8,6 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.project.data.repository.DataEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.project.service.DataService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,13 +26,13 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
     @Override
     public void putData(PutDataRequest request, StreamObserver<PutDataResponse> responseObserver) {
         try {
-            repo.save(DataEntity.builder()
+            DataEntity entity = repo.save(DataEntity.builder()
                     .key(request.getKey())
                     .value(request.getValue().toByteArray())
                     .build());
 
             responseObserver.onNext(PutDataResponse.newBuilder()
-                    .setStatus(true)
+                    .setEntity(mapToProto(entity))
                     .build());
             responseObserver.onCompleted();
 
