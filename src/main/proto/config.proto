@@ -28,7 +28,7 @@ message PutDataRequest {
 }
 
 message PutDataResponse {
-    DataEntity entity = 1;
+    bool status = 1;
 }
 
 

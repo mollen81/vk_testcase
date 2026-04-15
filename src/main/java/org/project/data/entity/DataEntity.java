@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.tarantool.core.mapping.Field;
 import org.springframework.data.tarantool.core.mapping.Tuple;
 
-@Tuple(spaceName = "KV")
+@Tuple("KV")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

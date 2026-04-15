@@ -7,12 +7,9 @@ import io.tarantool.driver.api.tuple.TarantoolTuple;
 import io.tarantool.driver.auth.SimpleTarantoolCredentials;
 import io.tarantool.driver.core.ClusterTarantoolTupleClient;
 import io.tarantool.driver.mappers.DefaultMessagePackMapper;
-import io.tarantool.driver.mappers.converters.ObjectConverter;
-import io.tarantool.driver.mappers.converters.ValueConverter;
 import org.msgpack.value.BinaryValue;
 import org.msgpack.value.ValueFactory;
 import org.msgpack.value.ValueType;
-import org.msgpack.value.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
@@ -35,7 +32,7 @@ public class TarantoolConfig {
     @Bean
     public TarantoolClientConfig tarantoolClientConfig() {
         return TarantoolClientConfig.builder()
-                .withCredentials(new SimpleTarantoolCredentials("guest", ""))
+                .withCredentials(new SimpleTarantoolCredentials("api_user", "123"))
                 .build();
     }
 
@@ -47,30 +44,14 @@ public class TarantoolConfig {
                 .withDefaultArrayValueConverter()
                 .build();
 
-        mapper.registerObjectConverter(
-                byte[].class,
-                BinaryValue.class,
-                new ObjectConverter<byte[], BinaryValue>() {
-                    @Override
-                    public BinaryValue toValue(byte[] object) {
-                        return ValueFactory.newBinary(object);
-                    }
-                }
-        );
+        mapper.registerObjectConverter(byte[].class, BinaryValue.class,
+                ValueFactory::newBinary);
 
-        mapper.registerValueConverter(
-                ValueType.BINARY,
-                byte[].class,
-                new ValueConverter<Value, byte[]>() {
-                    @Override
-                    public byte[] fromValue(Value value) {
-                        return value.asBinaryValue().asByteArray();
-                    }
-                }
-        );
+        mapper.registerValueConverter(ValueType.BINARY, byte[].class,
+                value -> value.asBinaryValue().asByteArray());
 
         TarantoolClientConfig config = TarantoolClientConfig.builder()
-                .withCredentials(new SimpleTarantoolCredentials("guest", ""))
+                .withCredentials(new SimpleTarantoolCredentials("api_user", "123"))
                 .withMessagePackMapper(mapper)
                 .build();
 

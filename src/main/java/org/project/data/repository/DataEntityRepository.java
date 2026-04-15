@@ -13,7 +13,7 @@ public interface DataEntityRepository extends TarantoolRepository<DataEntity, St
 
     Optional<DataEntity> findById(String key);
 
-    DataEntity save(DataEntity entity);
+    void save(DataEntity entity);
 
     void deleteById(String key);
 

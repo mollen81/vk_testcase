@@ -1,14 +1,15 @@
 services:
   tarantool:
-    image: tarantool/tarantool:3.1.0
+    image: tarantool/tarantool:2.11.0
     ports:
       - "3301:3301"
     volumes:
-      - ./config.yml:/etc/tarantool/config.yml
       - ./init.lua:/opt/tarantool/init.lua
       - tarantool_data:/var/lib/tarantool
     environment:
-      TARANTOOL_USER_NAME: guest
-      TT_CONFIG: /etc/tarantool/config.yml
+      TARANTOOL_USER_NAME: api_user
+      TARANTOOL_USER_PASSWORD: '123'
+      TARANTOOL_INIT_LUA: /opt/tarantool/init.lua
+
 volumes:
   tarantool_data:
