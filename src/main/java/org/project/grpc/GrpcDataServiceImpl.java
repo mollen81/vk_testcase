@@ -26,17 +26,20 @@ public class GrpcDataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
     @Override
     public void putData(PutDataRequest request, StreamObserver<PutDataResponse> responseObserver) {
         try {
-            DataEntity entity = repo.save(DataEntity.builder()
-                    .key(request.getKey())
-                    .value(request.getValue().toByteArray())
-                    .build());
+            repo.save(DataEntity.builder()
+                .key(request.getKey())
+                .value(request.getValue().toByteArray())
+                .build());
 
             responseObserver.onNext(PutDataResponse.newBuilder()
-                    .setEntity(mapToProto(entity))
+                    .setStatus(true)
                     .build());
             responseObserver.onCompleted();
 
         } catch (Exception e) {
+            responseObserver.onNext(PutDataResponse.newBuilder()
+                    .setStatus(false)
+                    .build());
             responseObserver.onError(Status.INTERNAL
                     .withDescription("Put failed: " + Arrays.toString(e.getStackTrace()))
                     .withCause(e)
